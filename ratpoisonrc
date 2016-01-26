@@ -1,0 +1,54 @@
+exec /usr/bin/rpws init 6 -k
+exec xcompmgr -c -f -D 3 &
+exec ./wallpaper.sh 30 shufall ~/Pictures/Wallpapers
+exec ./mailcheck.sh
+exec ./fsautomount.sh mount
+addhook quit exec ./ratpoison-quit-hooks.sh
+exec xmodmap -e 'clear Lock' -e 'keycode 66 = F13'
+exec xmodmap -e 'keycode 135 = Super_R'
+escape F13
+
+startup_message off
+set bargravity se
+set barborder 0
+set winfmt %n %s %t
+
+definekey top XF86Sleep exec systemctl poweroff
+definekey top XF86Display exec xset dpms force off
+definekey top XF86ScreenSaver exec xset dpms force off
+definekey top XF86AudioLowerVolume exec ratpoison -c "echo $(amixer set Master 5%-)"
+definekey top XF86AudioRaiseVolume exec ratpoison -c "echo $(amixer set Master 5%+)"
+definekey top XF86AudioMute exec ratpoison -c "echo $(amixer set Master toggle)"
+definekey top Print exec ratpoison -c "echo $(import -window root ~/screenshots/ratpoison.jpg)"
+definekey top s-1 rpws1
+definekey top s-F1 rpwsm1
+definekey top s-2 rpws2
+definekey top s-F2 rpwsm2
+definekey top s-3 rpws3
+definekey top s-F3 rpwsm3
+definekey top s-4 rpws4
+definekey top s-F4 rpwsm4
+definekey top s-5 rpws5
+definekey top s-F5 rpwsm5
+definekey top s-6 rpws6
+definekey top s-F6 rpwsm6
+
+
+definekey top M-m exec $(dmenu_path|dmenu)
+definekey top M-w exec ratpoison -c "select $(ratpoison -c 'windows'|dmenu|awk '{print $1}')"
+bind C-b exec ratpoison -c "echo Capacity: $(cat /sys/class/power_supply/BAT0/capacity)%"
+
+definekey top s-d exec stardict
+definekey top s-m exec ratpoison -c "echo $(udisks --mount /dev/disk/by-id/$( declare -i n=1; for disk in $(ls /dev/disk/by-id/); do echo $n. $disk; ((n++)); done | dmenu | awk '{print $2;}'))"
+definekey top s-u exec ratpoison -c "echo $(udisks --unmount /dev/disk/by-id/$( declare -i n=1; for disk in $(ls /dev/disk/by-id/); do echo $n. $disk; ((n++)); done | dmenu | awk '{print $2;}'); echo Done.)"
+
+bind D exec /usr/bin/sh -c "setxkbmap dvorak; xmodmap -e 'clear Lock' -e 'keycode 66 = F13' -e 'keycode 135 = Super_R';"
+bind t exec /usr/bin/sh -c "setxkbmap us; xmodmap -e 'clear Lock' -e 'keycode 66 = F13' -e 'keycode 135 = Super_R';"
+bind h focusleft
+bind l focusright
+bind j focusdown
+bind k focusup
+bind K kill
+bind bar hsplit
+bind S vsplit
+unbind s
